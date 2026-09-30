@@ -5,9 +5,11 @@ const path = require('path');
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const db = require('./db');
-const { initializeStocks } = require('./engine/marketData');
-const { computeNextPrice, applyMultiplier } = require('./engine/priceEngine');
-const { getLivePrice, refreshTargets, resetBaselines, applyShock, getFeedStatus } = require('./engine/liveApiFetcher');
+
+// FIXED IMPORTS: Removed './engine/' because your files are in the root directory
+const { initializeStocks } = require('./marketData');
+const { computeNextPrice, applyMultiplier } = require('./priceEngine');
+const { getLivePrice, refreshTargets, resetBaselines, applyShock, getFeedStatus } = require('./liveApiFetcher');
 
 const app = express();
 const server = http.createServer(app);
@@ -15,9 +17,28 @@ const io = new Server(server);
 
 app.use(express.json());
 
-// FIXED PATHING FOR RENDER DEPLOYMENT
-// This ensures it correctly finds your frontend files regardless of how GitHub structured your folders.
-app.use(express.static('public'));
+// FIXED FRONTEND ROUTING: Serving files directly from the root directory securely
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+app.get('/admin.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+// Explicitly serve your CSS and JS files assuming they were also uploaded flat
+app.get('/css/style.css', (req, res) => {
+  res.sendFile(path.join(__dirname, 'style.css'));
+});
+
+app.get('/js/client.js', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client.js'));
+});
+
 
 initializeStocks();
 
