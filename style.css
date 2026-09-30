@@ -15,7 +15,16 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg-main); color: var(--text-main); font-family: var(--font-ui); height: 100vh; overflow: hidden; }
+
+/* Locked to 1100px minimum to force exact laptop layout on all mobile devices */
+body { 
+  background: var(--bg-main); 
+  color: var(--text-main); 
+  font-family: var(--font-ui); 
+  height: 100vh; 
+  overflow: hidden; 
+  min-width: 1100px; 
+}
 
 /* MODAL / LOGIN */
 #landing-screen { position: fixed; inset: 0; background: radial-gradient(circle at center, #151922 0%, #080a0e 100%); display: flex; justify-content: center; align-items: center; z-index: 10000; }
@@ -143,81 +152,4 @@ body { background: var(--bg-main); color: var(--text-main); font-family: var(--f
 
 .dash-qty-input:focus {
   border-color: var(--accent);
-}
-/* ================= MOBILE / RESPONSIVE FIXES ================= */
-@media (max-width: 768px) {
-  /* 1. Fix Login Box Overlap */
-  .login-glass {
-    width: 90%;
-    max-width: 380px;
-    padding: 30px 20px;
-  }
-
-  /* 2. Fix Top Navigation Wrapping */
-  .top-nav {
-    height: auto;
-    flex-direction: column;
-    padding: 15px 10px;
-    gap: 15px;
-  }
-  .nav-left, .nav-right {
-    width: 100%;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .nav-tabs {
-    width: 100%;
-    justify-content: center;
-    gap: 5px;
-    margin-top: 10px;
-  }
-  .tab-btn {
-    padding: 8px 10px;
-    font-size: 0.75rem;
-  }
-
-  /* 3. Allow Body to Scroll Vertically on Mobile */
-  body {
-    overflow-y: auto;
-  }
-  .tab-content-area {
-    height: auto;
-    min-height: calc(100vh - 100px);
-    overflow-y: visible;
-  }
-
-  /* 4. Stack the Trading Workspace Vertically */
-  .terminal-layout {
-    display: flex;
-    flex-direction: column;
-    height: auto;
-  }
-  .terminal-watchlist {
-    height: 350px;
-    border-right: none;
-    border-bottom: 1px solid var(--border-color);
-  }
-  .terminal-chart-area {
-    height: 400px;
-    border-right: none;
-    border-bottom: 1px solid var(--border-color);
-  }
-  
-  /* 5. Stack Dashboard Cards */
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-    gap: 15px;
-    padding: 15px;
-  }
-
-  /* 6. Enable Swipe-to-Scroll on Tables (Prevents Squishing) */
-  .table-container, .leaderboard-container {
-    margin: 0 10px 20px 10px;
-    overflow-x: auto;
-    padding: 0;
-  }
-  .pro-table {
-    min-width: 650px; /* Forces table to stay readable, user swipes left/right to view */
-  }
 }
