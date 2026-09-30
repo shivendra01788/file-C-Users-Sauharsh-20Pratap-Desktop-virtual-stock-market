@@ -17,12 +17,13 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 /* Desktop base style */
-body { 
-  background: var(--bg-main); 
-  color: var(--text-main); 
-  font-family: var(--font-ui); 
-  height: 100vh; 
-  overflow: hidden; 
+body {
+  background: var(--bg-main);
+  color: var(--text-main);
+  font-family: var(--font-ui);
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 /* ================= MODAL / LOGIN ================= */
@@ -49,7 +50,7 @@ body {
 .btn-disconnect { background: transparent; border: 1px solid var(--border-color); color: var(--down-color); padding: 5px 12px; border-radius: 4px; cursor: pointer; }
 
 /* ================= CONTAINER & TABS ================= */
-.tab-content-area { height: calc(100vh - 50px); width: 100%; overflow: hidden; position: relative; }
+.tab-content-area { height: calc(100vh - 50px); height: calc(100dvh - 50px); width: 100%; overflow: hidden; position: relative; }
 .tab-view { width: 100%; height: 100%; display: none; }
 .tab-view.active { display: block; }
 
@@ -132,103 +133,205 @@ body {
 .dash-qty-input:focus { border-color: var(--accent); }
 
 /* ========================================================================= */
-/* ================= NATIVE MOBILE APP EXPERIENCE (UPSTOX STYLE) =========== */
+/* ====================== MOBILE APP LAYOUT (<= 768px) ===================== */
 /* ========================================================================= */
+/* App-shell approach: header on top, bottom tab bar, and ONLY the middle
+   area scrolls. No more page-level scrolling fighting with fixed bars.     */
 @media (max-width: 768px) {
-  /* 1. Free the body constraints */
-  body { overflow-y: auto; overflow-x: hidden; }
-  
-  /* 2. Resize Login Box */
-  .login-glass { width: 90%; max-width: 380px; padding: 30px 20px; }
-  
-  /* 3. Sleek Mobile Header */
-  .top-nav { height: 60px; padding: 0 15px; position: sticky; top: 0; z-index: 500; }
-  .nav-left { gap: 10px; flex: 1; }
-  .trader-badge { display: none; } /* Hide name to save space */
-  .nav-cash { font-size: 0.95rem; }
-  
-  /* 4. Bottom App Navigation Bar */
+
+  :root {
+    --m-head-h: 52px;
+    --m-nav-h: 56px;
+    --m-safe-b: env(safe-area-inset-bottom, 0px);
+    --m-safe-t: env(safe-area-inset-top, 0px);
+    --m-order-h: 76px;
+  }
+
+  html, body { height: 100%; }
+  body {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior: none;
+  }
+  button, .wl-row, .tab-btn { touch-action: manipulation; }
+
+  /* Stop iOS Safari zooming in when an input is focused (needs >= 16px) */
+  input, select, textarea { font-size: 16px !important; }
+
+  /* ---------- Login ---------- */
+  #landing-screen { padding: 16px; }
+  .login-glass { width: 100%; max-width: 380px; padding: 28px 20px; }
+  .login-glass h1 { font-size: 1.8rem; }
+
+  /* ---------- Top header (compact) ---------- */
+  .top-nav {
+    height: calc(var(--m-head-h) + var(--m-safe-t));
+    padding: var(--m-safe-t) 12px 0;
+  }
+  .nav-left { gap: 0; }
+  .brand { font-size: 0.95rem; }
+  .nav-right { gap: 10px; font-size: 0.8rem; }
+  .trader-badge { display: none; }
+  .nav-cash { font-size: 0.85rem; white-space: nowrap; }
+  .btn-disconnect { padding: 7px 10px; font-size: 0.7rem; min-height: 34px; }
+
+  /* ---------- Bottom tab bar ---------- */
   .nav-tabs {
     position: fixed;
-    bottom: 0;
-    left: 0;
+    left: 0; right: 0; bottom: 0;
     width: 100%;
-    height: 60px;
+    height: calc(var(--m-nav-h) + var(--m-safe-b));
+    padding-bottom: var(--m-safe-b);
     background: var(--bg-panel);
     border-top: 1px solid var(--border-color);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
     z-index: 9999;
-    padding: 0;
+    display: flex;
   }
   .tab-btn {
     flex: 1;
     height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.65rem;
-    padding: 0;
+    padding: 0 4px;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     border-bottom: none;
     border-top: 3px solid transparent;
-    transition: 0.2s;
+    display: flex; align-items: center; justify-content: center;
   }
+  .tab-btn:hover { border-bottom-color: transparent; }
   .tab-btn.active {
-    border-bottom: none;
-    border-top: 3px solid var(--accent);
     color: var(--accent);
-    background: linear-gradient(180deg, rgba(41,98,255,0.12) 0%, transparent 100%);
+    border-bottom: none;
+    border-top-color: var(--accent);
+    background: linear-gradient(180deg, rgba(41,98,255,0.14) 0%, transparent 100%);
   }
 
-  /* 5. Content Area Adjustments */
-  .tab-content-area { 
-    height: auto; 
-    min-height: calc(100vh - 120px); 
-    padding-bottom: 70px; /* Cushion for bottom nav */
-    overflow-y: visible; 
+  /* ---------- Scrolling content area (between header and bottom bar) ---------- */
+  .tab-content-area {
+    height: calc(100dvh - var(--m-head-h) - var(--m-safe-t) - var(--m-nav-h) - var(--m-safe-b));
+    overflow: hidden;
+  }
+  .tab-view.active {
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
 
-  /* 6. Stacked Trading Terminal Elements */
-  .terminal-layout { display: flex; flex-direction: column; }
-  
-  /* Watchlist sits at top as a scrollable menu */
-  .terminal-watchlist { height: 35vh; border-right: none; border-bottom: 6px solid var(--bg-main); }
-  
-  /* Chart sits below Watchlist */
-  .terminal-chart-area { height: 45vh; border-right: none; border-bottom: 6px solid var(--bg-main); }
-  .chart-header { flex-wrap: wrap; height: auto; padding: 10px 15px; gap: 10px; }
-  .cs-title, .cs-price { font-size: 1rem; }
-  
-  /* Order Panel flows naturally at bottom */
-  .terminal-order-dock { border-right: none; }
-  .order-dock-body { padding-bottom: 90px; } /* Prevent sticky buttons from covering inputs */
+  /* ---------- Trading terminal: stacked ---------- */
+  .terminal-layout { display: flex; flex-direction: column; height: auto; }
 
-  /* 7. Sticky Buy/Sell Action Bar */
+  /* Watchlist becomes a horizontal swipe strip to save vertical space */
+  .terminal-watchlist {
+    height: auto;
+    flex-shrink: 0;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .wl-header { padding: 8px 12px; }
+  .wl-items {
+    display: flex;
+    flex-direction: row;
+    flex: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+  .wl-items::-webkit-scrollbar { display: none; }
+  .wl-row {
+    flex: 0 0 auto;
+    min-width: 135px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 10px 14px;
+    border-bottom: none;
+    border-right: 1px solid var(--border-color);
+    scroll-snap-align: start;
+  }
+  .wl-row.active { border-left: none; box-shadow: inset 0 -3px 0 var(--accent); }
+
+  /* Chart */
+  .terminal-chart-area {
+    height: auto;
+    flex-shrink: 0;
+    border-right: none;
+    border-bottom: 6px solid var(--bg-main);
+  }
+  .chart-header { height: auto; flex-wrap: wrap; padding: 10px 12px; gap: 8px; }
+  .chart-stock-info { gap: 8px; }
+  .cs-title { font-size: 1rem; }
+  .cs-price { font-size: 1.05rem; }
+  .chart-tools { font-size: 0.68rem; gap: 8px; }
+  .chart-viewport {
+    flex: none;
+    min-height: 0;
+    height: clamp(240px, 38dvh, 360px);
+  }
+
+  /* Order panel */
+  .terminal-order-dock { overflow: visible; flex-shrink: 0; }
+  .order-dock-body {
+    padding: 14px 14px calc(var(--m-order-h) + 24px);
+    gap: 14px;
+  }
+  .order-input { padding: 14px 12px; }
+
+  /* Sticky Buy / Sell bar, sits right above the bottom tab bar */
   .order-button-group {
     position: fixed;
-    bottom: 60px; /* Sits exactly on top of bottom nav */
-    left: 0;
-    width: 100%;
-    padding: 10px 15px;
+    left: 0; right: 0;
+    bottom: calc(var(--m-nav-h) + var(--m-safe-b));
+    height: var(--m-order-h);
+    padding: 12px 14px;
+    gap: 10px;
     background: var(--bg-panel);
     border-top: 1px solid var(--border-color);
+    box-shadow: 0 -8px 20px rgba(0,0,0,0.45);
     z-index: 9998;
-    box-shadow: 0 -10px 25px rgba(0,0,0,0.4);
-    display: flex;
-    gap: 10px;
   }
-  .btn-order { flex: 1; padding: 16px 0; font-size: 1.05rem; }
+  .btn-order { min-height: 48px; padding: 0; font-size: 1rem; border-radius: 8px; }
 
-  /* 8. Responsive Swipeable Tables */
-  .dashboard-grid { grid-template-columns: 1fr; gap: 12px; padding: 15px; }
-  .table-container { margin: 0 10px 20px 10px; overflow-x: auto; border-radius: 6px; }
-  .pro-table { min-width: 650px; } /* Swipe left/right to view */
-  
-  .leaderboard-container { padding: 15px 10px; overflow-x: auto; max-height: none; }
-  #leaderboard-table { min-width: 550px; }
+  /* ---------- Dashboard ---------- */
+  .dashboard-grid { grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; }
+  .stat-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .stat-card { padding: 14px; gap: 4px; }
+  .sc-value { font-size: 1.15rem; }
 
-  /* 9. Mobile Toasts */
-  #news-container { top: 70px; right: 10px; left: 10px; align-items: center; }
-  .toast { width: 100%; max-width: 400px; }
+  .table-container {
+    margin: 0 12px 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table-title { padding: 12px 14px; position: sticky; left: 0; }
+  .pro-table { min-width: 620px; }
+  .pro-table th { padding: 10px 12px; font-size: 0.68rem; }
+  .pro-table td { padding: 12px; font-size: 0.8rem; }
+  /* Keep the symbol/name column visible while swiping sideways */
+  .pro-table th:first-child, .pro-table td:first-child {
+    position: sticky; left: 0; z-index: 1;
+    background: var(--bg-panel);
+    box-shadow: 1px 0 0 var(--border-color);
+  }
+  .pro-table th:first-child { background: var(--bg-surface); }
+  .dash-qty-input { width: 56px; padding: 8px 6px; }
+  .btn-sell-dash { padding: 8px 12px; min-height: 36px; }
+
+  /* ---------- Leaderboard ---------- */
+  .leaderboard-container { padding: 12px; max-height: none; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  #leaderboard-table { min-width: 480px; }
+
+  /* ---------- Toasts: full-width under the header ---------- */
+  #news-container {
+    top: calc(var(--m-head-h) + var(--m-safe-t) + 8px);
+    left: 10px; right: 10px;
+    align-items: center;
+    pointer-events: none;
+  }
+  .toast { width: 100%; max-width: 420px; padding: 12px 14px; pointer-events: auto; }
 }
