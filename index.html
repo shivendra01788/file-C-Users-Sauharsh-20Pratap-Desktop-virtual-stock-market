@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TradePro Institutional Terminal</title>
+  <!-- Cache Buster applied to ensure immediate UI updates -->
+  <link rel="stylesheet" href="/css/style.css?v=4">
+  <!-- Pinned to v4.2.0: newer v5 removed addAreaSeries and breaks older chart code -->
+  <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+</head>
+<body>
+
+  <div id="news-container"></div>
+
+  <!-- ONBOARDING MODAL -->
+  <div id="landing-screen">
+    <div class="login-glass">
+      <h1>Trade<span>Pro</span></h1>
+      <p>Institutional Trading Terminal</p>
+      <input type="text" id="trader-name-input" class="name-input" placeholder="Enter Trader Name">
+      <button class="btn-enter" onclick="joinMarket()">LAUNCH WORKSPACE</button>
+      <div id="auth-msg"></div>
+    </div>
+  </div>
+
+  <!-- MAIN WORKSPACE -->
+  <div id="app-screen" style="display: none;">
+    <!-- TOP GLOBAL BAR -->
+    <header class="top-nav">
+      <div class="nav-left">
+        <div class="brand">TRADE<span>PRO</span></div>
+        <nav class="nav-tabs">
+          <button class="tab-btn" onclick="switchTab('dashboard')" id="tab-btn-dashboard">DASHBOARD</button>
+          <button class="tab-btn active" onclick="switchTab('terminal')" id="tab-btn-terminal">TRADING WORKSPACE</button>
+          <button class="tab-btn" onclick="switchTab('leaderboard')" id="tab-btn-leaderboard">LEADERBOARD</button>
+        </nav>
+      </div>
+
+      <div class="nav-right">
+        <div class="trader-badge" id="header-trader-tag">TRADER: --</div>
+        <div class="nav-cash">MARGIN: <span id="header-cash-val">₹0.00</span></div>
+        <button class="btn-disconnect" onclick="logout()">Exit</button>
+      </div>
+    </header>
+
+    <!-- CONTENT TABS -->
+    <div class="tab-content-area">
+
+      <!-- ================= PAGE 1: PERSONAL DASHBOARD ================= -->
+      <section id="tab-dashboard" class="tab-view" style="display: none;">
+        <div class="dashboard-grid">
+          <div class="stat-card">
+            <span class="sc-label">AVAILABLE TRADING MARGIN</span>
+            <span class="sc-value" id="dash-cash">₹0.00</span>
+          </div>
+          <div class="stat-card">
+            <span class="sc-label">TOTAL PORTFOLIO NET WORTH</span>
+            <span class="sc-value text-up" id="dash-portfolio">₹0.00</span>
+          </div>
+          <div class="stat-card">
+            <span class="sc-label">OPEN UNREALIZED P&L</span>
+            <span class="sc-value" id="dash-pnl">₹0.00</span>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="table-title">Active Positions & Portfolio Holdings</div>
+          <table class="pro-table" id="holdings-table">
+            <thead>
+              <tr>
+                <th>INSTRUMENT</th>
+                <th>QTY</th>
+                <th>AVG PRICE</th>
+                <th>LTP</th>
+                <th>CURRENT VALUE</th>
+                <th>UNREALIZED P&L</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="7" class="empty-state">No open positions. Select a stock in the Trading Workspace to execute orders.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= PAGE 2: TRADING WORKSPACE ================= -->
+      <section id="tab-terminal" class="tab-view active">
+        <div class="terminal-layout">
+
+          <!-- LEFT: WATCHLIST -->
+          <aside class="terminal-watchlist">
+            <div class="wl-header">
+              <span>MARKET WATCH</span>
+              <span class="exchange-tag">NSE / NIFTY 50</span>
+            </div>
+            <ul id="market-list" class="wl-items"></ul>
+          </aside>
+
+          <!-- CENTER: HIGH-RES CHART WORKSPACE -->
+          <main class="terminal-chart-area">
+            <div class="chart-header">
+              <div class="chart-stock-info">
+                <span id="active-symbol-title" class="cs-title">RELIANCE</span>
+                <span class="cs-tag">NSE EQ</span>
+                <span id="active-symbol-price" class="cs-price text-up">₹0.00</span>
+              </div>
+              <div class="chart-tools">
+                <span class="time-badge">20x SPEED FEED</span>
+                <span class="status-live">● LIVE</span>
+              </div>
+            </div>
+            <div class="chart-viewport" id="chart-viewport">
+              <div id="tvchart"></div>
+            </div>
+          </main>
+
+          <!-- RIGHT: ORDER EXECUTION DOCK -->
+          <aside class="terminal-order-dock">
+            <div class="order-dock-header">ORDER ENTRY</div>
+            
+            <div class="order-dock-body">
+              <div class="selected-target">
+                <span class="lbl">ORDER INSTRUMENT</span>
+                <span id="order-dock-symbol" class="val">RELIANCE</span>
+              </div>
+
+              <div class="form-group">
+                <label>SHARES QUANTITY</label>
+                <input type="number" id="trade-qty" class="order-input" value="10" min="1" oninput="calculateTotal()">
+              </div>
+
+              <div class="margin-calc-box">
+                <div class="calc-row">
+                  <span>Price per Share:</span>
+                  <span id="dock-ltp">₹0.00</span>
+                </div>
+                <div class="calc-row total-row">
+                  <span>Required Margin:</span>
+                  <span id="trade-total">₹0.00</span>
+                </div>
+              </div>
+
+              <div class="order-button-group">
+                <button class="btn-order buy" onclick="executeTrade('BUY')">BUY / LONG</button>
+                <button class="btn-order sell" onclick="executeTrade('SELL')">SELL / SHORT</button>
+              </div>
+
+              <div class="trade-notes">
+                <span>• Orders route through real-time liquidity queue.</span>
+                <span>• 20x price volatility is actively applied.</span>
+              </div>
+            </div>
+          </aside>
+
+        </div>
+      </section>
+
+      <!-- ================= PAGE 3: LEADERBOARD ================= -->
+      <section id="tab-leaderboard" class="tab-view" style="display: none;">
+        <div class="leaderboard-container">
+          <div class="lb-header-box">
+            <h2>LIVE TRADING FLOOR RANKINGS</h2>
+            <p>Standings update automatically based on real-time portfolio market evaluation.</p>
+          </div>
+          <table class="pro-table" id="leaderboard-table">
+            <thead>
+              <tr>
+                <th style="width: 80px;">RANK</th>
+                <th>TRADER</th>
+                <th>CASH AVAILABLE</th>
+                <th>PORTFOLIO HOLDINGS</th>
+                <th>NET VALUATION</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-rows"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/client.js?v=4"></script>
+</body>
+</html>

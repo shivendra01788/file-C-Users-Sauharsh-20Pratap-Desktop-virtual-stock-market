@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TradePro - Admin Control Center</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #080a0e; --panel: #13171f; --border: #232936; --accent: #2962ff; --up: #00c087; --down: #f84960; --text: #f0f3f8; --muted: #79859b; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 20px; }
+    h1, h2 { margin: 0 0 15px 0; }
+    .grid { display: grid; grid-template-columns: 1fr 350px; gap: 20px; max-width: 1400px; margin: 0 auto; }
+    .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    
+    table { width: 100%; border-collapse: collapse; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+    th, td { text-align: left; padding: 10px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); text-transform: uppercase; font-family: 'Inter', sans-serif; }
+    
+    .form-group { margin-bottom: 15px; }
+    label { display: block; color: var(--muted); font-size: 0.8rem; margin-bottom: 5px; font-weight: 600; }
+    input, select { width: 100%; box-sizing: border-box; padding: 10px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px; font-family: inherit; }
+    button { width: 100%; padding: 12px; background: var(--down); color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    button:hover { opacity: 0.9; }
+    .btn-up { background: var(--up); }
+    
+    .badge { padding: 3px 6px; border-radius: 3px; font-size: 0.75rem; background: #232936; }
+    .text-up { color: var(--up); }
+    .text-down { color: var(--down); }
+  </style>
+</head>
+<body>
+
+  <div class="grid">
+    <!-- LEFT: User Monitor -->
+    <div class="card">
+      <h2>Active Traders Monitoring</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Trader Name</th>
+            <th>Available Cash</th>
+            <th>Portfolio Value</th>
+            <th>Total Net Worth</th>
+            <th>Open Positions</th>
+          </tr>
+        </thead>
+        <tbody id="users-tbody">
+          <tr><td colspan="5" style="text-align:center; color:#79859b;">Loading data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- RIGHT: Market Controller -->
+    <div class="card">
+      <h2>Market Controller</h2>
+      <p style="color: var(--muted); font-size: 0.85rem; margin-top: 0; margin-bottom: 20px;">Deploy live news to terminals and manipulate stock prices.</p>
+      
+      <div class="form-group">
+        <label>TARGET INSTRUMENT</label>
+        <select id="news-symbol">
+          <option value="GLOBAL">ALL STOCKS (GLOBAL MARKET)</option>
+          <!-- Will populate dynamically -->
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>BREAKING NEWS HEADLINE</label>
+        <input type="text" id="news-headline" placeholder="E.g., Unexpected earnings beat, stock soaring!" />
+      </div>
+
+      <div class="form-group">
+        <label>PRICE SHOCK (DECIMAL)</label>
+        <input type="number" id="news-shock" step="0.01" value="0.05" placeholder="0.05 = +5%, -0.10 = -10%" />
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;">
+        <button class="btn-up" onclick="deployNews(true)">DEPLOY RALLY (Positive)</button>
+        <button onclick="deployNews(false)">DEPLOY CRASH (Negative)</button>
+      </div>
+      
+      <div id="admin-status" style="margin-top: 15px; font-size: 0.85rem; color: var(--up);"></div>
+    </div>
+  </div>
+
+  <script>
+    async function loadAdminData() {
+      try {
+        const res = await fetch('/api/admin/state');
+        const data = await res.json();
+        
+        // Populate User Table
+        const tbody = document.getElementById('users-tbody');
+        tbody.innerHTML = '';
+        if(data.users.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#79859b;">No active traders yet.</td></tr>';
+        } else {
+          data.users.sort((a,b) => (b.cash + b.portfolioValue) - (a.cash + a.portfolioValue)).forEach(u => {
+            const positions = u.holdings.map(h => `<span class="badge">${h.symbol} x${h.qty}</span>`).join(' ');
+            tbody.innerHTML += `
+              <tr>
+                <td><strong>${u.name}</strong></td>
+                <td>₹${u.cash.toLocaleString('en-IN', {maximumFractionDigits:0})}</td>
+                <td>₹${u.portfolioValue.toLocaleString('en-IN', {maximumFractionDigits:0})}</td>
+                <td class="${u.cash+u.portfolioValue > 1000000 ? 'text-up' : 'text-down'}">
+                  ₹${(u.cash + u.portfolioValue).toLocaleString('en-IN', {maximumFractionDigits:0})}
+                </td>
+                <td>${positions || '-'}</td>
+              </tr>
+            `;
+          });
+        }
+
+        // Populate Select Dropdown (only if empty to avoid resetting user selection)
+        const select = document.getElementById('news-symbol');
+        if(select.options.length <= 1) {
+          data.stocks.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s.symbol;
+            opt.textContent = `${s.symbol} (LTP: ₹${s.current_price.toFixed(2)})`;
+            select.appendChild(opt);
+          });
+        }
+      } catch (err) {
+        console.error('Failed to load admin state', err);
+      }
+    }
+
+    async function deployNews(isPositive) {
+      const symbol = document.getElementById('news-symbol').value;
+      const headline = document.getElementById('news-headline').value || (isPositive ? 'Market rallies on positive sentiment!' : 'Heavy selloff triggers market crash!');
+      let shock = Math.abs(parseFloat(document.getElementById('news-shock').value || 0));
+      
+      if (!isPositive) shock = -shock; // Make negative if crash
+
+      const res = await fetch('/api/admin/news', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ symbol, headline, shock_percent: shock })
+      });
+
+      const data = await res.json();
+      if(data.success) {
+        document.getElementById('admin-status').textContent = `✅ Successfully deployed ${isPositive ? 'rally' : 'crash'} to ${symbol}.`;
+        document.getElementById('admin-status').className = isPositive ? 'text-up' : 'text-down';
+        setTimeout(() => document.getElementById('admin-status').textContent = '', 3000);
+      }
+    }
+
+    // Refresh monitoring table every 2 seconds
+    setInterval(loadAdminData, 2000);
+    loadAdminData();
+  </script>
+</body>
+</html>
