@@ -1,4 +1,4 @@
-const db = require('../db');
+const db = require('./db');
 
 // Expanded to 50 Real-World Stocks (NIFTY 50 + High Interest)
 const INITIAL_STOCKS = [
