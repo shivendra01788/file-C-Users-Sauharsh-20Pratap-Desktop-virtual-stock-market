@@ -1,0 +1,19 @@
+{
+  "name": "virtual-stock-market",
+  "version": "1.0.0",
+  "description": "Real-time Virtual Stock Market Simulation",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5",
+    "sqlite3": "^5.1.7",
+    "upstox-js-sdk": "^2.31.0",
+    "yahoo-finance2": "^4.0.2"
+  }
+}
