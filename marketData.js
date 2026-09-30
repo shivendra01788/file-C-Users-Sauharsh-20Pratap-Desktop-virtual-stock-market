@@ -1,3 +1,4 @@
+// FIXED: Removed the extra dot (../) so it looks in the same flat folder
 const db = require('./db');
 
 // Expanded to 50 Real-World Stocks (NIFTY 50 + High Interest)
