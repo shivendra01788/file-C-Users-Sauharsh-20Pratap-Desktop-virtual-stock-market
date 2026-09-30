@@ -16,17 +16,16 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Locked to 1100px minimum to force exact laptop layout on all mobile devices */
+/* Desktop base style */
 body { 
   background: var(--bg-main); 
   color: var(--text-main); 
   font-family: var(--font-ui); 
   height: 100vh; 
   overflow: hidden; 
-  min-width: 1100px; 
 }
 
-/* MODAL / LOGIN */
+/* ================= MODAL / LOGIN ================= */
 #landing-screen { position: fixed; inset: 0; background: radial-gradient(circle at center, #151922 0%, #080a0e 100%); display: flex; justify-content: center; align-items: center; z-index: 10000; }
 .login-glass { background: var(--bg-panel); border: 1px solid var(--border-color); padding: 40px; border-radius: 12px; width: 380px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.8); }
 .login-glass h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 6px; }
@@ -36,7 +35,7 @@ body {
 .name-input:focus { border-color: var(--accent); }
 .btn-enter { width: 100%; padding: 14px; background: var(--accent); border: none; border-radius: 6px; color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer; transition: 0.2s; }
 
-/* NAVIGATION HEADER */
+/* ================= NAVIGATION HEADER ================= */
 .top-nav { height: 50px; background: var(--bg-panel); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 16px; }
 .nav-left { display: flex; align-items: center; gap: 30px; height: 100%; }
 .brand { font-size: 1rem; font-weight: 800; }
@@ -49,7 +48,7 @@ body {
 .nav-cash span { font-family: var(--font-mono); font-weight: 700; color: var(--up-color); }
 .btn-disconnect { background: transparent; border: 1px solid var(--border-color); color: var(--down-color); padding: 5px 12px; border-radius: 4px; cursor: pointer; }
 
-/* CONTAINER & TABS */
+/* ================= CONTAINER & TABS ================= */
 .tab-content-area { height: calc(100vh - 50px); width: 100%; overflow: hidden; position: relative; }
 .tab-view { width: 100%; height: 100%; display: none; }
 .tab-view.active { display: block; }
@@ -57,7 +56,6 @@ body {
 /* ================= TRADING WORKSPACE ================= */
 .terminal-layout { display: grid; grid-template-columns: 290px 1fr 310px; grid-template-rows: minmax(0, 1fr); height: 100%; width: 100%; }
 
-/* LEFT: WATCHLIST */
 .terminal-watchlist { background: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; height: 100%; min-height: 0; overflow: hidden; }
 .wl-header { padding: 12px 16px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); flex-shrink: 0; }
 .exchange-tag { background: var(--bg-surface); padding: 2px 6px; border-radius: 3px; }
@@ -72,7 +70,6 @@ body {
 .wl-sub { font-size: 0.75rem; color: var(--text-muted); }
 .wl-price { font-family: var(--font-mono); font-size: 0.95rem; font-weight: 700; border-radius: 3px; padding: 1px 4px; }
 
-/* CENTER: CHART */
 .terminal-chart-area { display: flex; flex-direction: column; height: 100%; min-height: 0; background: var(--bg-main); border-right: 1px solid var(--border-color); }
 .chart-header { height: 48px; padding: 0 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); }
 .chart-stock-info { display: flex; align-items: center; gap: 12px; }
@@ -84,8 +81,7 @@ body {
 .chart-viewport { flex: 1; width: 100%; position: relative; min-height: 400px; }
 #tvchart { position: absolute; inset: 0; width: 100%; height: 100%; }
 
-/* RIGHT: ORDER DOCK */
-.terminal-order-dock { background: var(--bg-panel); display: flex; flex-direction: column; min-height: 0; overflow-y: auto; }
+.terminal-order-dock { background: var(--bg-panel); display: flex; flex-direction: column; min-height: 0; overflow-y: auto; position: relative; }
 .order-dock-header { padding: 14px 16px; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; font-weight: 700; }
 .order-dock-body { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
 .selected-target { display: flex; justify-content: space-between; padding: 12px; background: var(--bg-surface); border-radius: 6px; font-weight: 800; }
@@ -94,12 +90,14 @@ body {
 .calc-row { display: flex; justify-content: space-between; }
 .total-row { border-top: 1px solid var(--border-color); padding-top: 8px; font-weight: 700; color: var(--accent); font-size: 1rem; }
 .order-button-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.btn-order { padding: 14px; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; color: #fff; }
+.btn-order { padding: 14px; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; color: #fff; transition: 0.15s; }
 .btn-order.buy { background: var(--up-color); }
+.btn-order.buy:active { background: #008f65; }
 .btn-order.sell { background: var(--down-color); }
+.btn-order.sell:active { background: #c63345; }
 .trade-notes { display: flex; flex-direction: column; gap: 4px; font-size: 0.75rem; color: var(--text-muted); }
 
-/* ================= DASHBOARD ================= */
+/* ================= DASHBOARD & LEADERBOARD ================= */
 .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 24px; }
 .stat-card { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
 .sc-label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); }
@@ -107,49 +105,130 @@ body {
 .table-container { margin: 0 24px; background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
 .table-title { padding: 16px 20px; border-bottom: 1px solid var(--border-color); font-weight: 700; }
 .pro-table { width: 100%; border-collapse: collapse; text-align: right; }
-.pro-table th { background: var(--bg-surface); padding: 12px 20px; font-size: 0.75rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color); text-transform: uppercase; }
-.pro-table td { padding: 14px 20px; border-bottom: 1px solid var(--border-color); font-family: var(--font-mono); font-size: 0.9rem; }
+.pro-table th { background: var(--bg-surface); padding: 12px 20px; font-size: 0.75rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color); text-transform: uppercase; white-space: nowrap; }
+.pro-table td { padding: 14px 20px; border-bottom: 1px solid var(--border-color); font-family: var(--font-mono); font-size: 0.9rem; white-space: nowrap; }
 .pro-table th:first-child, .pro-table td:first-child { text-align: left; }
 .btn-sell-dash { background: transparent; border: 1px solid var(--down-color); color: var(--down-color); padding: 6px 12px; border-radius: 4px; font-weight: 700; font-size: 0.75rem; cursor: pointer; transition: 0.2s; }
 .btn-sell-dash:hover { background: var(--down-color); color: #fff; }
-.empty-state { text-align: center !important; color: var(--text-muted); padding: 30px; }
+.empty-state { text-align: center !important; color: var(--text-muted); padding: 30px; white-space: normal !important; }
 
-/* LEADERBOARD VIEW */
 .leaderboard-container { padding: 24px 30px; max-width: 1100px; margin: 0 auto; overflow-y: auto; max-height: 100%; }
 .rank-badge { font-weight: 800; padding: 4px 8px; border-radius: 4px; background: var(--bg-surface); color: var(--text-muted); }
 .is-user { background: rgba(41, 98, 255, 0.08); }
+
+/* ================= HELPERS & ANIMATIONS ================= */
 .text-up { color: var(--up-color); }
 .text-down { color: var(--down-color); }
 #news-container { position: fixed; top: 16px; right: 16px; z-index: 99999; display: flex; flex-direction: column; gap: 8px; }
 .toast { background: var(--bg-panel); border: 1px solid var(--border-color); border-left: 4px solid var(--accent); padding: 14px 18px; border-radius: 6px; width: 320px; }
 
-/* ================= TICK FLASH ANIMATION ================= */
 @keyframes flashUp   { 0% { background: rgba(0, 192, 135, 0.45); } 100% { background: transparent; } }
 @keyframes flashDown { 0% { background: rgba(248, 73, 96, 0.45); }  100% { background: transparent; } }
 .flash-up   { animation: flashUp 0.6s ease-out; }
 .flash-down { animation: flashDown 0.6s ease-out; }
 
-/* ================= DASHBOARD ACTION CONTROLS ================= */
-.dash-action-group {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-}
+.dash-action-group { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.dash-qty-input { width: 65px; padding: 6px 8px; background: var(--bg-surface); border: 1px solid var(--border-color); color: #fff; font-family: var(--font-mono); font-size: 0.85rem; border-radius: 4px; text-align: center; outline: none; }
+.dash-qty-input:focus { border-color: var(--accent); }
 
-.dash-qty-input {
-  width: 65px;
-  padding: 6px 8px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  color: #fff;
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  border-radius: 4px;
-  text-align: center;
-  outline: none;
-}
+/* ========================================================================= */
+/* ================= NATIVE MOBILE APP EXPERIENCE (UPSTOX STYLE) =========== */
+/* ========================================================================= */
+@media (max-width: 768px) {
+  /* 1. Free the body constraints */
+  body { overflow-y: auto; overflow-x: hidden; }
+  
+  /* 2. Resize Login Box */
+  .login-glass { width: 90%; max-width: 380px; padding: 30px 20px; }
+  
+  /* 3. Sleek Mobile Header */
+  .top-nav { height: 60px; padding: 0 15px; position: sticky; top: 0; z-index: 500; }
+  .nav-left { gap: 10px; flex: 1; }
+  .trader-badge { display: none; } /* Hide name to save space */
+  .nav-cash { font-size: 0.95rem; }
+  
+  /* 4. Bottom App Navigation Bar */
+  .nav-tabs {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: var(--bg-panel);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 9999;
+    padding: 0;
+  }
+  .tab-btn {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    padding: 0;
+    border-bottom: none;
+    border-top: 3px solid transparent;
+    transition: 0.2s;
+  }
+  .tab-btn.active {
+    border-bottom: none;
+    border-top: 3px solid var(--accent);
+    color: var(--accent);
+    background: linear-gradient(180deg, rgba(41,98,255,0.12) 0%, transparent 100%);
+  }
 
-.dash-qty-input:focus {
-  border-color: var(--accent);
+  /* 5. Content Area Adjustments */
+  .tab-content-area { 
+    height: auto; 
+    min-height: calc(100vh - 120px); 
+    padding-bottom: 70px; /* Cushion for bottom nav */
+    overflow-y: visible; 
+  }
+
+  /* 6. Stacked Trading Terminal Elements */
+  .terminal-layout { display: flex; flex-direction: column; }
+  
+  /* Watchlist sits at top as a scrollable menu */
+  .terminal-watchlist { height: 35vh; border-right: none; border-bottom: 6px solid var(--bg-main); }
+  
+  /* Chart sits below Watchlist */
+  .terminal-chart-area { height: 45vh; border-right: none; border-bottom: 6px solid var(--bg-main); }
+  .chart-header { flex-wrap: wrap; height: auto; padding: 10px 15px; gap: 10px; }
+  .cs-title, .cs-price { font-size: 1rem; }
+  
+  /* Order Panel flows naturally at bottom */
+  .terminal-order-dock { border-right: none; }
+  .order-dock-body { padding-bottom: 90px; } /* Prevent sticky buttons from covering inputs */
+
+  /* 7. Sticky Buy/Sell Action Bar */
+  .order-button-group {
+    position: fixed;
+    bottom: 60px; /* Sits exactly on top of bottom nav */
+    left: 0;
+    width: 100%;
+    padding: 10px 15px;
+    background: var(--bg-panel);
+    border-top: 1px solid var(--border-color);
+    z-index: 9998;
+    box-shadow: 0 -10px 25px rgba(0,0,0,0.4);
+    display: flex;
+    gap: 10px;
+  }
+  .btn-order { flex: 1; padding: 16px 0; font-size: 1.05rem; }
+
+  /* 8. Responsive Swipeable Tables */
+  .dashboard-grid { grid-template-columns: 1fr; gap: 12px; padding: 15px; }
+  .table-container { margin: 0 10px 20px 10px; overflow-x: auto; border-radius: 6px; }
+  .pro-table { min-width: 650px; } /* Swipe left/right to view */
+  
+  .leaderboard-container { padding: 15px 10px; overflow-x: auto; max-height: none; }
+  #leaderboard-table { min-width: 550px; }
+
+  /* 9. Mobile Toasts */
+  #news-container { top: 70px; right: 10px; left: 10px; align-items: center; }
+  .toast { width: 100%; max-width: 400px; }
 }
